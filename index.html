@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title> Registration Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="navbar-title">Captain Dashboard</div>
+        <div class="navbar-menu">
+            <a href="#">Home</a>
+            <a href="#">Search Student</a>
+            <a href="#">Edit Application</a>
+            <a href="#">Bulk Submit Attendance</a>
+            <a href="#">Submit Attendance</a>
+            <a href="#">Change Password</a>
+            <a href="/login/login.php">Logout</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Registration Dashboard</h1>
+
+        <!-- Group Toggle Buttons -->
+        <div class="group-toggle">
+            <button id="groupAButton" onclick="showGroup('A')">Group A</button>
+            <button id="groupBButton" onclick="showGroup('B')">Group B</button>
+        </div>
+
+        <!-- Group A Section -->
+        <div id="groupA" style="display: none;">
+            <div class="search-print">
+                <input type="number" id="searchRollA" placeholder="Search by Roll" value="<?php echo $search_roll_a; ?>">
+                <select id="searchGroupA">
+                    <option value="A" selected>A</option>
+                </select>
+                <button onclick="searchRecords('A')">Search Group A</button>
+                <button onclick="printTable('A')">Print Group A</button>
+            </div>
+            <div class="print-title" id="printTitleA">CST Session 2023-24 - Group A</div>
+            <table id="tableA">
+                <thead>
+                    <tr>
+                        <th>Serial</th>
+                        <th>Name</th>
+                        <th>
+                            <a href="dashboard.php?sort=<?php echo ($sort === 'roll_asc') ? 'roll_desc' : 'roll_asc'; ?>&roll=<?php echo $search_roll; ?>&group=<?php echo $search_group; ?>" class="sort-link">
+                                Roll <?php echo ($sort === 'roll_asc') ? '▲' : ($sort === 'roll_desc' ? '▼' : ''); ?>
+                            </a>
+                        </th>
+                        <th>Group</th>
+                        <th>Mobile</th>
+                        <th>Guardian Relation</th>
+                        <th>Guardian Name</th>
+                        <th>Guardian Mobile</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($result_a->num_rows > 0) {
+                        $serial = 1;
+                        while ($row = $result_a->fetch_assoc()) {
+                            echo "<tr>
+                                    <td>{$serial}</td>
+                                    <td>{$row['name']}</td>
+                                    <td>{$row['roll']}</td>
+                                    <td>{$row['group_name']}</td>
+                                    <td>{$row['mobile']}</td>
+                                    <td>{$row['guardian_relation']}</td>
+                                    <td>{$row['guardian_name']}</td>
+                                    <td>{$row['guardian_mobile']}</td>
+                                    <td><button class='delete-btn' onclick=\"deleteRecord({$row['id']})\">Delete</button></td>
+                                  </tr>";
+                            $serial++;
+                        }
+                    } else {
+                        echo "<tr><td colspan='9'>No records found for Group A</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Group B Section -->
+        <div id="groupB" style="display: none;">
+            <div class="search-print">
+                <input type="number" id="searchRollB" placeholder="Search by Roll" value="<?php echo $search_roll_b; ?>">
+                <select id="searchGroupB">
+                    <option value="B" selected>B</option>
+                </select>
+                <button onclick="searchRecords('B')">Search Group B</button>
+                <button onclick="printTable('B')">Print Group B</button>
+            </div>
+            <div class="print-title" id="printTitleB">CST Session 2023-24 - Group B</div>
+            <table id="tableB">
+                <thead>
+                    <tr>
+                        <th>Serial</th>
+                        <th>Name</th>
+                        <th>
+                            <a href="dashboard.php?sort=<?php echo ($sort === 'roll_asc') ? 'roll_desc' : 'roll_asc'; ?>&roll=<?php echo $search_roll; ?>&group=<?php echo $search_group; ?>" class="sort-link">
+                                Roll <?php echo ($sort === 'roll_asc') ? '▲' : ($sort === 'roll_desc' ? '▼' : ''); ?>
+                            </a>
+                        </th>
+                        <th>Group</th>
+                        <th>Mobile</th>
+                        <th>Guardian Relation</th>
+                        <th>Guardian Name</th>
+                        <th>Guardian Mobile</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php
+                    if ($result_b->num_rows > 0) {
+                        $serial = 1;
+                        while ($row = $result_b->fetch_assoc()) {
+                            echo "<tr>
+                                    <td>{$serial}</td>
+                                    <td>{$row['name']}</td>
+                                    <td>{$row['roll']}</td>
+                                    <td>{$row['group_name']}</td>
+                                    <td>{$row['mobile']}</td>
+                                    <td>{$row['guardian_relation']}</td>
+                                    <td>{$row['guardian_name']}</td>
+                                    <td>{$row['guardian_mobile']}</td>
+                                    <td><button class='delete-btn' onclick=\"deleteRecord({$row['id']})\">Delete</button></td>
+                                  </tr>";
+                            $serial++;
+                        }
+                    } else {
+                        echo "<tr><td colspan='9'>No records found for Group B</td></tr>";
+                    }
+                    ?>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="logOut">
+            <button><a href='/login/login.php'>Logout</a></button>
+        </div>
+    </div>
+
+    <script>
+        function deleteRecord(id) {
+            if (confirm('Are you sure you want to delete this record?')) {
+                window.location.href = `delete.php?id=${id}`;
+            }
+        }
+
+        function searchRecords(group) {
+            const roll = group === 'A' ? document.getElementById('searchRollA').value : document.getElementById('searchRollB').value;
+            const groupValue = group === 'A' ? 'A' : 'B';
+            window.location.href = `dashboard.php?roll_${group.toLowerCase()}=${roll}&group_${group.toLowerCase()}=${groupValue}`;
+        }
+
+        function printTable(group) {
+            const printContents = document.getElementById(`table${group}`).outerHTML;
+            const printTitle = document.getElementById(`printTitle${group}`).outerHTML;
+            const originalContents = document.body.innerHTML;
+            document.body.innerHTML = printTitle + printContents;
+            window.print();
+            document.body.innerHTML = originalContents;
+            window.location.reload();
+        }
+
+        function showGroup(group) {
+            if (group === 'A') {
+                document.getElementById('groupA').style.display = 'block';
+                document.getElementById('groupB').style.display = 'none';
+                document.getElementById('groupAButton').classList.add('active');
+                document.getElementById('groupBButton').classList.remove('active');
+            } else {
+                document.getElementById('groupA').style.display = 'none';
+                document.getElementById('groupB').style.display = 'block';
+                document.getElementById('groupAButton').classList.remove('active');
+                document.getElementById('groupBButton').classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
